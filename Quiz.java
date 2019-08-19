@@ -24,9 +24,10 @@ import java.util.Scanner;
     public static void main(String[] args) {
         System.out.print("Enter your Name: ");
         CreatePlayer player1 = new CreatePlayer(input.nextLine());
-        int playerChoice;
+        int playerChoice, num;
 
-        for (int i = 0, num = 1; i < totalQues; i++) {
+        for (int i = 0; i < totalQues; i++) {
+            num = 1;
             // Displays the question
             System.out.println("----------------------------------------------");
             System.out.println("Q"+(i+1)+". "+quesObj.showNewQuestion(i));
@@ -36,9 +37,7 @@ import java.util.Scanner;
                 System.out.println(num+". "+option);
                 num++;
             }
-            num = 1;
             System.out.print("\n>>> ");
-
             playerChoice = input.nextInt()-1;
 
             if(checkAnswer(i, playerChoice)){
