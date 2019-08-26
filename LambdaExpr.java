@@ -1,7 +1,7 @@
 /**
  * Interface:-
  * 1) Normal (with multiple method declarations)
- * 2) Single Abractract Method (SAM)
+ * 2) Single Abstract Method (SAM)
  * 3) Mark Interface (interfaces with no method declarations--> e.g: Serialize)
  * 
  * Lambda Expression works with *SAM only! 
