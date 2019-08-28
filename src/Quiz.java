@@ -58,7 +58,7 @@ import java.util.Scanner;
 /**
  * CreatePlayer is for the player object to maintain scores
  */
-public class CreatePlayer {
+class CreatePlayer {
     private String name;
     private int score;
     CreatePlayer(String name){
@@ -79,7 +79,7 @@ public class CreatePlayer {
     }
 }
 
-public class Questions{
+class Questions{
     int totalQues = 5;
     private String ques[] = {
         "From where does Sun rises?",

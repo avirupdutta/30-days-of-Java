@@ -6,7 +6,7 @@ public class InnerClassDemo {
     }
 }
 
-public class Apple {
+class Apple {
 
     static String brandName = "Apple Inc.";
 
