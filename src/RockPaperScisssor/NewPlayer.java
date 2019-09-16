@@ -11,7 +11,7 @@ public class NewPlayer {
     public void decreaseScore(){
         score -= Configs.scoreUpdateDiff;
     }
-    public boolean reachedMaxScore() { return score == Configs.winningScore; }
+    public boolean reachedMaxScore() { return score >= Configs.winningScore; }
 
     public int getScore(){
         return score;

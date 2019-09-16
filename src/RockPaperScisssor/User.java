@@ -8,5 +8,7 @@ public class User extends NewPlayer {
     User () {
         System.out.print("Enter Your Name: ");
         name = input.nextLine();
+        if (name.length() < 1 )
+            name = "Guest";
     }
 }

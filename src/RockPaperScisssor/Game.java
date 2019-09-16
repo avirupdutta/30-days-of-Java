@@ -1,5 +1,10 @@
 package RockPaperScisssor;
 
+//import RockPaperScisssor.Input;
+//import RockPaperScisssor.User;
+//import RockPaperScisssor.Computer;
+//import RockPaperScisssor.Configs;
+
 public class Game {
     public static void displayScoreBoard(User player, Computer comp){
         System.out.println("========== SCORE BOARD ==========");
@@ -40,18 +45,19 @@ public class Game {
 
 
             if (player.reachedMaxScore()){
-                System.out.println(player.name + " has Won!");
+                System.out.println(player.name + " has Won!\n=======================================");
                 break;
             }
             else if (computer.reachedMaxScore()){
-                System.out.println(computer.name + " has Won!");
+                System.out.println(computer.name + " has Won!\n=======================================");
                 break;
             }
         }
     }
 
     public static boolean replayGame(){
-        return false;
+        System.out.println("Want to Replay the Game ???");
+        return Input.chooseReplay();
     }
 
 //    This method is not yet implemented
@@ -59,18 +65,32 @@ public class Game {
         System.exit(0);
     }
 
+    public static void displayTimeOut(int secs) {
+        System.out.print("\nGame is starting in... ");
+        for (; secs >= 1; secs--){
+            try{ Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
+            System.out.print(secs+" ");
+        }
+        System.out.print("\n");
+    }
+
     public static void main ( String[] args ) {
         boolean play = true;
+        int menuChoice;
         while (play){
-
+            menuChoice = Input.chooseMainMenu();
 //            main game controller
-            if (Input.chooseMainMenu()==1){
+            if (menuChoice == 1){
 //               set the winning score to reach
                 Input.chooseWinningScore();
+                displayTimeOut(5);
                 startNewGame();
             }
+            else if (menuChoice == 2)
+                break;
 //            prompts the player for a replay game
-            else if (replayGame()){
+            if (replayGame()){
+                System.out.println("\n=========== INITIALIZING REMATCH ===========\n");
                 continue;
             }
             play = false;
