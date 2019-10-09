@@ -14,10 +14,15 @@ public class BinaryTreeDemo {
         binarTreeObj.insert(5);
         binarTreeObj.insert(3);
         binarTreeObj.insert(8);
+        binarTreeObj.insert(80);
+        binarTreeObj.insert(86);
+        binarTreeObj.insert(50);
 
 //         binarTreeObj.showInOrder(binarTreeObj.root);
          binarTreeObj.showPreOrder(binarTreeObj.root);
         // binarTreeObj.showPostOrder(binarTreeObj.root);
+
+        System.out.println("\n"+binarTreeObj.countNodes());
     }
 
 }
@@ -42,6 +47,18 @@ class Tree{
         return currNode;
     }
 
+    int countNodes(){
+        return countNodes(root, 0, 0);
+    }
+    private int countNodes(Node currNode, int leftCount, int rightCount){
+
+        if (currNode == null)
+            return 0;
+        leftCount = countNodes(currNode.leftChild, leftCount, rightCount);
+        rightCount = countNodes(currNode.rightChild, leftCount, rightCount);
+
+        return leftCount + rightCount + 1;
+    }
 
     void showInOrder(Node currNode){
         if(currNode == null)
