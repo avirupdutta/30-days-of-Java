@@ -11,7 +11,6 @@ public class Main {
         Book newBook = new Book(title, author, count);
         allBooks.add(newBook);
     }
-
     public static void showAllBooks(){
         for (Book book : allBooks) {
             System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Available: "+(book.takenBy == null));
@@ -26,20 +25,26 @@ public class Main {
         int input;
         while(true){
             System.out.println("Press 1 for adding new Book to library!");
+            System.out.println("Press 2 for borrowing a book.");
             System.out.println("Press 0 for exit");
 
             input = userInput.nextInt();
             if (input == 0)
                 break;
-            System.out.println();
-            userInput.nextLine();
-            System.out.print("Enter book title: ");
-            String title = userInput.nextLine();
-            System.out.print("Enter book author: ");
-            String  author = userInput.nextLine();
-            System.out.print("Enter Quantity: ");
-            addNewBook(title, author, userInput.nextInt());
-            System.out.println();
+            else if (input == 1) {
+                System.out.println();
+                userInput.nextLine();
+                System.out.print("Enter book title: ");
+                String title = userInput.nextLine();
+                System.out.print("Enter book author: ");
+                String author = userInput.nextLine();
+                System.out.print("Enter Quantity: ");
+                addNewBook(title, author, userInput.nextInt());
+                System.out.println();
+            }
+            if (input == 2){
+                // borrow new book from library only after authentication
+            }
         }
 
 
