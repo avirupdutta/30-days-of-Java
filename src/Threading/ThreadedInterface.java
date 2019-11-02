@@ -1,3 +1,4 @@
+package Threading;
 /*
 	Implementing multithreading using 'Runnable' which is a functional interface, that
 	helps us to extend any super class, if we want.
