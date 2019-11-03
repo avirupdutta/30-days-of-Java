@@ -1,0 +1,9 @@
+List of all features:
+=====================
+login
+signup
+custom exception class
+package design
+Arraylist
+date and time
+implemented binary search algo

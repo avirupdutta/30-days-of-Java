@@ -7,11 +7,13 @@ public class User {
     int limit = 4;
     String[] borrowedBooksId = new String[limit];
     ArrayList<Book> borrowedBooks = new ArrayList<Book>();
-    String username = "";
+    final String username;
+    final String password;
     int countBooks;
     
-    User(String name){
+    User(String name, String pass){
         username = name;
+        password = pass;
     }
 
     private void checkoutNewBook(Book newBook){
