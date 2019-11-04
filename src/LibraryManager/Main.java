@@ -25,7 +25,7 @@ public class Main {
     public static boolean findBook(String bookName, String author){
         boolean bookFound = false;
         for (Book book : allBooks) {
-            if (book.title == bookName && book.author == author) {
+            if (book.title.equals(bookName) && book.author.equals(author)) {
                 bookFound = true;
                 break;
             }
@@ -38,7 +38,7 @@ public class Main {
 //    with same book name and author name
     public static void updateBookQuantity(String bookName, String author, int num){
         for(Book bookObj : allBooks){
-            if (bookObj.title == bookName && bookObj.author == author){
+            if (bookObj.title.equals(bookName) && bookObj.author.equals(author)){
                 bookObj.totalCount += num;
                 break;
             }
@@ -47,21 +47,32 @@ public class Main {
     }
 
     // create new account
-    public static void createNewAccount(String username, String password){
-        User newUser = new User(username, password);
-        allUsers.add(newUser);
-    }
-
-    // login old user
-    public static boolean loginUser(String username, String password){
-        boolean found = false;
+    public static boolean createNewAccount(String username, String password){
+        // create new account only if the username is not taken
+        boolean usernameAvailable = true;
         for(User userObj : allUsers){
-            if (userObj.username.equals(username) && userObj.password.equals(password)){
-                found = true;
+            if (userObj.username.equals(username)){
+                usernameAvailable = false;
                 break;
             }
         }
-        return found;
+        if (usernameAvailable) {
+            User newUser = new User(username, password);
+            allUsers.add(newUser);
+        }
+        return usernameAvailable;
+    }
+
+    // login old user
+    public static User loginUser(String username, String password){
+        User foundUser = null;
+        for(User userObj : allUsers){
+            if (userObj.username.equals(username) && userObj.password.equals(password)){
+                foundUser = userObj;
+                break;
+            }
+        }
+        return foundUser;
     }
 
     public static void main ( String[] args ) {
@@ -117,8 +128,12 @@ public class Main {
                         String username = userInput.nextLine();
                         System.out.print("Password: ");
                         String password = userInput.nextLine();
-                        if (loginUser(username, password)){
-                            // login successfull
+
+                        // stores the obj of logged in user
+                        User loggedInUser = loginUser(username, password);
+
+                        if (loggedInUser != null){
+                            // login successful
                             System.out.println("Logged in successfully!");
                             System.out.println();
                             System.out.println("====== LIST OF ALL BOOKS ======");
@@ -126,8 +141,37 @@ public class Main {
                             System.out.println("======= END OF LIST =======");
                             System.out.println();
 
+                            System.out.print("Enter book id: ");
+                            Long bookId = userInput.nextLong();
+
+                            System.out.print("Enter book name: ");
+                            String bookName = userInput.nextLine();
+
+                            System.out.print("Enter author name: ");
+                            String author = userInput.nextLine();
+
+                            try {
+                                // 0. if the user already have reached borrow limit then don't give another one
+                                // 1. if the user already have that book then don't give another one
+                                // 2. otherwise add 1 book to the user's collection
+                                loggedInUser.borrowNewBook(bookId, bookName, author);
+                            }
+                            catch (ReachedBorrowLimitException | BookIsAlreadyBorrowedException e){
+                                e.printStackTrace();
+                            }
+                            catch (Exception e){
+                                e.printStackTrace();
+                            }
+
+                            // 3. reduce 1 copy of that book from library
+                            updateBookQuantity(bookName, author, -1);
+
+//                            @TODO -> logout the user if no more books are to be borrowed
                         }else{
                             // login failed
+                            System.out.println();
+                            System.out.println("Login Failed: Invalid username or password");
+                            System.out.println();
                         }
                     }
                     else if (choice == 2){
@@ -139,15 +183,19 @@ public class Main {
                         System.out.print("Password: ");
                         String password = userInput.nextLine();
 
-                        createNewAccount(username, password);
-                        System.out.println("Account has been created for "+username);
+                        if(createNewAccount(username, password)){
+                            System.out.println("Account has been created for "+username);
+                        }
+                        else{
+                            System.out.println("Error: Could not create new account. Username is already taken!");
+                        }
                     }
                     else if (choice == 9){
                         // go back to main menu
                         break;
                     }
                     else if (choice == 0){
-                        // stop the program immediately
+                        // @TODO -> stop the program immediately
                     }
                 }
             }

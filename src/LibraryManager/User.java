@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class User {
     int limit = 4;
-    String[] borrowedBooksId = new String[limit];
+//    String[] borrowedBooksId = new String[limit];
     ArrayList<Book> borrowedBooks = new ArrayList<Book>();
     final String username;
     final String password;
@@ -16,40 +16,50 @@ public class User {
         password = pass;
     }
 
-    private void checkoutNewBook(Book newBook){
-        // set the dates
-        newBook.dateLastTaken = LocalDate.now();
-        newBook.dateOfReturn = LocalDate.now().plusDays(7);
-
-        // add the book to the user's collection
-        borrowedBooks.add(newBook);
-    }
-    
-    public boolean borrowNewBook(String bookName, String author) throws Exception {
+    public void borrowNewBook(Long bookId, String bookName, String author) throws Exception {
         boolean pass = true;
 
         // checks if the user has reached its maximum borrowing limit
-        countBooks = borrowedBooks.size();
-        if (countBooks == limit){
-            pass = false;
-            throw new ReachedBorrowLimitException("Already reached borrow "+limit+" of books!");
-        }
+        reachedBorrowLimit();
 
         // checking if the user has already borrowed the book
+        alreadyHaveTheBook(bookName, author);
+
+        // if no exception arises the user is authorized to borrow
+        Book newBook = new Book(bookId, bookName, author, 1, username);
+
+        // add the book to the user's collection
+        borrowedBooks.add(newBook);
+        countBooks = borrowedBooks.size();
+    }
+
+    public void returnBook(Long bookId){
         for(Book bookObj : borrowedBooks){
-            if (bookObj.title == bookName && bookObj.author == author){
-                pass = false;
-                throw new BookIsAlreadyBorrowedException("Book has already been borrowed by you!");
+            if (bookObj.uid.equals(bookId)){
+                borrowedBooks.remove(bookObj);
+                break;
             }
         }
+    }
 
-        if (pass){
-            countBooks++;
-            Book newBook = new Book(bookName, author, 1);
-            checkoutNewBook(newBook);
+
+    // check if the user  has already reached the borrow limit or not
+    private void reachedBorrowLimit () throws ReachedBorrowLimitException {
+        // checks if the user has reached its maximum borrowing limit
+        int countBooks = borrowedBooks.size();
+        if (countBooks == limit){
+            throw new ReachedBorrowLimitException("Already reached borrow "+limit+" of books!");
         }
+    }
 
-        return pass;
+    // Already have the book
+    private void alreadyHaveTheBook ( String bookName, String author ) throws BookIsAlreadyBorrowedException{
+        // checking if the user has already borrowed the book
+        for(Book bookObj : borrowedBooks){
+            if (bookObj.title.equals(bookName) && bookObj.author.equals(author)){
+                throw new BookIsAlreadyBorrowedException("Book has already been borrowed!");
+            }
+        }
     }
 }
 

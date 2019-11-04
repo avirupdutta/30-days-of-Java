@@ -18,9 +18,11 @@ public class Book{
         dateLastTaken = null;
         dateOfReturn = null;
     }
-
-    public void checkout (String username) {
-        totalCount--;
+    Book(Long id, String bookTitle, String authorName, int quantity, String username) {
+        uid = id;
+        title = bookTitle;
+        author = authorName;
+        totalCount = quantity;
         takenBy = username;
         dateLastTaken = LocalDate.now();
         dateOfReturn = LocalDate.now().plusDays(7);
