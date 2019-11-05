@@ -135,44 +135,54 @@ public class Main {
                         if (loggedInUser != null){
                             // login successful
                             System.out.println("Logged in successfully!");
-                            System.out.println();
-                            System.out.println("====== LIST OF ALL BOOKS ======");
-                            showAllBooks();
-                            System.out.println("======= END OF LIST =======");
-                            System.out.println();
 
-                            System.out.print("Enter book name: ");
-                            String bookName = userInput.nextLine();
+                            while(loggedInUser != null){
+                                System.out.println();
+                                System.out.println("====== LIST OF ALL BOOKS ======");
+                                showAllBooks();
+                                System.out.println("======= END OF LIST =======");
+                                System.out.println();
 
-                            System.out.print("Enter author name: ");
-                            String author = userInput.nextLine();
+                                System.out.print("Enter book name: ");
+                                String bookName = userInput.nextLine();
 
-                            System.out.print("Enter book id: ");
-                            Long bookId = userInput.nextLong();
+                                System.out.print("Enter author name: ");
+                                String author = userInput.nextLine();
 
-                            // check if the book is actually present in the library or not
-                            if (findBook(bookName, author)){
-                                try {
-                                    // 0. if the user already have reached borrow limit then don't give another one
-                                    // 1. if the user already have that book then don't give another one
-                                    // 2. otherwise add 1 book to the user's collection
-                                    loggedInUser.borrowNewBook(bookId, bookName, author);
+                                System.out.print("Enter book id: ");
+                                Long bookId = userInput.nextLong();
+                                userInput.nextLine(); // clearing the buffer for '\n'
+
+                                // check if the book is actually present in the library or not
+                                if (findBook(bookName, author)){
+                                    try {
+                                        // 0. if the user already have reached borrow limit then don't give another one
+                                        // 1. if the user already have that book then don't give another one
+                                        // 2. otherwise add 1 book to the user's collection
+                                        loggedInUser.borrowNewBook(bookId, bookName, author);
+                                    }
+                                    catch (ReachedBorrowLimitException | BookIsAlreadyBorrowedException e){
+                                        e.printStackTrace();
+                                    }
+                                    catch (Exception e){
+                                        e.printStackTrace();
+                                    }
+
+                                    // 3. reduce 1 copy of that book from library
+                                    updateBookQuantity(bookName, author, -1);
                                 }
-                                catch (ReachedBorrowLimitException | BookIsAlreadyBorrowedException e){
-                                    e.printStackTrace();
+                                else{
+                                    System.out.println("\nBook is Currently Unavailable! All copies have been checked out.\n");
                                 }
-                                catch (Exception e){
-                                    e.printStackTrace();
+                                System.out.print("Press (Y/n) to logout your Account: ");
+                                char logout = userInput.nextLine().toUpperCase().charAt(0);
+                                if (logout == 'Y'){
+                                    loggedInUser = null;
+                                    System.out.println("You have been successfully logged out of your Account");
                                 }
-
-                                // 3. reduce 1 copy of that book from library
-                                updateBookQuantity(bookName, author, -1);
                             }
-                            else{
-                                System.out.println("\nBook is Currently Unavailable! All copies have been checked out.\n");
-                            }
-//                            @TODO -> logout the user if no more books are to be borrowed
-                        }else{
+                        }
+                        else{
                             // login failed
                             System.out.println();
                             System.out.println("Login Failed: Invalid username or password");
