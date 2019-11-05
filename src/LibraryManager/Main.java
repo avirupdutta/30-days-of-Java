@@ -17,7 +17,7 @@ public class Main {
 //    displays all the books and their details in the console
     public static void showAllBooks(){
         for (Book book : allBooks) {
-            System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Available: "+(book.takenBy == null));
+            System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Available: "+(book.totalCount > 0));
         }
     }
 
@@ -25,7 +25,7 @@ public class Main {
     public static boolean findBook(String bookName, String author){
         boolean bookFound = false;
         for (Book book : allBooks) {
-            if (book.title.equals(bookName) && book.author.equals(author)) {
+            if (book.title.equals(bookName) && book.author.equals(author) && book.totalCount > 0) {
                 bookFound = true;
                 break;
             }
@@ -141,31 +141,36 @@ public class Main {
                             System.out.println("======= END OF LIST =======");
                             System.out.println();
 
-                            System.out.print("Enter book id: ");
-                            Long bookId = userInput.nextLong();
-
                             System.out.print("Enter book name: ");
                             String bookName = userInput.nextLine();
 
                             System.out.print("Enter author name: ");
                             String author = userInput.nextLine();
 
-                            try {
-                                // 0. if the user already have reached borrow limit then don't give another one
-                                // 1. if the user already have that book then don't give another one
-                                // 2. otherwise add 1 book to the user's collection
-                                loggedInUser.borrowNewBook(bookId, bookName, author);
-                            }
-                            catch (ReachedBorrowLimitException | BookIsAlreadyBorrowedException e){
-                                e.printStackTrace();
-                            }
-                            catch (Exception e){
-                                e.printStackTrace();
-                            }
+                            System.out.print("Enter book id: ");
+                            Long bookId = userInput.nextLong();
 
-                            // 3. reduce 1 copy of that book from library
-                            updateBookQuantity(bookName, author, -1);
+                            // check if the book is actually present in the library or not
+                            if (findBook(bookName, author)){
+                                try {
+                                    // 0. if the user already have reached borrow limit then don't give another one
+                                    // 1. if the user already have that book then don't give another one
+                                    // 2. otherwise add 1 book to the user's collection
+                                    loggedInUser.borrowNewBook(bookId, bookName, author);
+                                }
+                                catch (ReachedBorrowLimitException | BookIsAlreadyBorrowedException e){
+                                    e.printStackTrace();
+                                }
+                                catch (Exception e){
+                                    e.printStackTrace();
+                                }
 
+                                // 3. reduce 1 copy of that book from library
+                                updateBookQuantity(bookName, author, -1);
+                            }
+                            else{
+                                System.out.println("\nBook is Currently Unavailable! All copies have been checked out.\n");
+                            }
 //                            @TODO -> logout the user if no more books are to be borrowed
                         }else{
                             // login failed
