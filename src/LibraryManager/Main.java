@@ -79,8 +79,8 @@ public class Main {
         Scanner userInput = new Scanner(System.in);
         int input;
         while(true){
-            System.out.println("Press 1 for registering new Book to library!");
-            System.out.println("Press 2 for borrowing a book.");
+            System.out.println("Press 1 for registering new Book to library (Admin)");
+            System.out.println("Press 2 for Students");
             System.out.println("Press 0 for exit");
             input = userInput.nextInt();
 
@@ -138,6 +138,7 @@ public class Main {
 
                             while(loggedInUser != null){
                                 System.out.println();
+                                // @TODO -> show the user options (logout, all books in lib, books borrowed until now with their info)
                                 System.out.println("====== LIST OF ALL BOOKS ======");
                                 showAllBooks();
                                 System.out.println("======= END OF LIST =======");
@@ -210,7 +211,8 @@ public class Main {
                         break;
                     }
                     else if (choice == 0){
-                        // @TODO -> stop the program immediately
+                        System.out.println("\n======== PROGRAM TERMINATED ========\n");
+                        System.exit(0);
                     }
                 }
             }
@@ -224,6 +226,6 @@ public class Main {
 //        addNewBook("My 4th Book", "Abc4");
 //        addNewBook("My 5h Book", "Abc5");
 
-        showAllBooks();
+//        showAllBooks();
     }
 }
