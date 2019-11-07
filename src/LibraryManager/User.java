@@ -33,12 +33,24 @@ public class User {
         countBooks = borrowedBooks.size();
     }
 
-    public void returnBook(Long bookId){
+    public Book returnBook(Long bookId){
+        Book book = null;
         for(Book bookObj : borrowedBooks){
             if (bookObj.uid.equals(bookId)){
+                book = bookObj;
                 borrowedBooks.remove(bookObj);
                 break;
             }
+        }
+        return book;
+    }
+
+    public void showAllBorrowedBooks(){
+        if (borrowedBooks.size() == 0){
+            System.out.println("======= Your list of books is Empty! Try borrowing new books ======");
+        }
+        for (Book book : borrowedBooks) {
+            System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Date of Return: "+book.dateOfReturn);
         }
     }
 
