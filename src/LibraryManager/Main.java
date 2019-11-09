@@ -1,6 +1,7 @@
 package LibraryManager;
 
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
@@ -46,21 +47,28 @@ public class Main {
         System.out.println(bookName+" quantity has been updated!");
     }
 
-    // create new account
-    public static boolean createNewAccount(String username, String password){
-        // create new account only if the username is not taken
-        boolean usernameAvailable = true;
-        for(User userObj : allUsers){
-            if (userObj.username.equals(username)){
-                usernameAvailable = false;
+    // checks if the username is unique or not and returns true if the username is available
+    public static boolean usernameIsUnique(String uname){
+        Boolean flag = true;
+        for(User user : allUsers){
+            if (user.username.equals(uname)){
+                flag = false;
                 break;
             }
         }
-        if (usernameAvailable) {
+        return flag;
+    }
+
+    // create new account
+    public static boolean createNewAccount(String username, String password){
+        // create new account only if the username is not taken
+        boolean usernameIsAvailable = usernameIsUnique(username);
+
+        if (usernameIsAvailable) {
             User newUser = new User(username, password);
             allUsers.add(newUser);
         }
-        return usernameAvailable;
+        return usernameIsAvailable;
     }
 
     // login old user
@@ -75,15 +83,25 @@ public class Main {
         return foundUser;
     }
 
+//    @TODO -> Refactor the entire main()
+//    @TODO-> Check for any raised exceptions when user is expected to enter any integer
     public static void main ( String[] args ) {
         Scanner userInput = new Scanner(System.in);
         int input;
         while(true){
+            System.out.println("\n============================== MAIN MENU ===========================");
+//            @TODO-> Redesign the Admin Panel
             System.out.println("Press 1 for registering new Book to library (Admin)");
             System.out.println("Press 2 for Students");
             System.out.println("Press 0 for exit");
-            input = userInput.nextInt();
-
+            try {
+                input = userInput.nextInt();
+            }
+            catch (InputMismatchException e){
+                userInput.nextLine(); // clearing the buffer
+                System.out.println("Invalid Input! Please Enter a number :(");
+                continue;
+            }
             if (input == 0)
                 break;
             else if (input == 1) {
@@ -113,6 +131,7 @@ public class Main {
             if (input == 2){
                 // borrow new book from library only after authentication
                 while(true){
+                    System.out.println("\n============================== STUDENT'S MENU ===========================");
                     System.out.println("Press 1 for Login");
                     System.out.println("Press 2 to Create new Account");
                     System.out.println("Press 9 for previous menu");
@@ -134,10 +153,11 @@ public class Main {
 
                         if (loggedInUser != null){
                             // login successful
-                            System.out.println("Logged in successfully!");
 
                             while(loggedInUser != null){
-                                System.out.println();
+                                System.out.println("================================================================");
+                                System.out.println("*****\tAccount for '"+loggedInUser.username+"'\t*****");
+                                System.out.println("================================================================");
                                 System.out.println("Press 1 to see list of all Books available in library");
                                 System.out.println("Press 2 to search for any book's availability");
                                 System.out.println("Press 3 to get list of books borrowed by you");
@@ -232,9 +252,8 @@ public class Main {
                                 if (choice == 9){
                                     System.out.print("Press (Y/n) to logout your Account: ");
 
-//                                    @TODO-> (Fix) User is getting logged out on typing "ysd"
-                                    char logout = userInput.nextLine().toUpperCase().charAt(0);
-                                    if (logout == 'Y'){
+                                    String logout = userInput.nextLine().toUpperCase();
+                                    if (logout.equals("YES") || logout.equals("Y")){
                                         loggedInUser = null;
                                         System.out.println("You have been successfully logged out of your Account");
                                     }
@@ -250,18 +269,33 @@ public class Main {
                     }
                     else if (choice == 2){
                         // sign up
-                        System.out.println("====== CREATING NEW USER ACCOUNT =====");
+                        boolean flag = true;
                         System.out.println(userInput.nextLine()); // clearing the buffer
-                        System.out.print("Username: ");
-                        String username = userInput.nextLine();
-                        System.out.print("Password: ");
-                        String password = userInput.nextLine();
+                        while(flag){
+                            System.out.println("====== CREATING NEW USER ACCOUNT =====");
+                            System.out.print("Username: ");
+                            String username = userInput.nextLine().strip();
 
-                        if(createNewAccount(username, password)){
-                            System.out.println("Account has been created for "+username);
-                        }
-                        else{
-                            System.out.println("Error: Could not create new account. Username is already taken!");
+                            if (username.length() >= 2 && username.length() <= 20){
+                                System.out.print("Password: ");
+                                String password = userInput.nextLine();
+
+                                if (password.length() < 6){
+                                    System.out.println("Password must be at least 6 characters long!");
+                                    continue;
+                                }
+
+                                if(createNewAccount(username, password)){
+                                    System.out.println("\nAccount has been created for "+username+"\n");
+                                    flag = false;
+                                }
+                                else{
+                                    System.out.println("Error: Could not create new account. Username is already taken!");
+                                }
+                            }
+                            else{
+                                System.out.println("Username must be 2 to 20 characters long");
+                            }
                         }
                     }
                     else if (choice == 9){

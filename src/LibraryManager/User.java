@@ -47,7 +47,7 @@ public class User {
 
     public void showAllBorrowedBooks(){
         if (borrowedBooks.size() == 0){
-            System.out.println("======= Your list of books is Empty! Try borrowing new books ======");
+            System.out.println("Your list of books is Empty! Try borrowing new books");
         }
         for (Book book : borrowedBooks) {
             System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Date of Return: "+book.dateOfReturn);

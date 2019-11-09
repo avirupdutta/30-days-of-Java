@@ -12,18 +12,20 @@ public class Debug {
 //        System.out.println(name + " : " + age + " : "+ course);
 
 
-        while(true){
-            System.out.println("press 1 to stop outer loop");
-            int c = sc.nextInt();
-            if (c == 1)
-                break;
-            while(true){
-                System.out.println("press 2 to stop inner loop");
-                c = sc.nextInt();
-                if (c == 2)
-                    break;
-            }
-        }
+//        while(true){
+//            System.out.println("press 1 to stop outer loop");
+//            int c = sc.nextInt();
+//            if (c == 1)
+//                break;
+//            while(true){
+//                System.out.println("press 2 to stop inner loop");
+//                c = sc.nextInt();
+//                if (c == 2)
+//                    break;
+//            }
+//        }
+
+        System.out.println("              abc".strip().length());
 
     }
 }
