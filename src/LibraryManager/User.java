@@ -33,6 +33,7 @@ public class User {
         countBooks = borrowedBooks.size();
     }
 
+    // removes a book from the user's collection
     public Book returnBook(Long bookId){
         Book book = null;
         for(Book bookObj : borrowedBooks){
