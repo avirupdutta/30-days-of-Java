@@ -1,7 +1,5 @@
 package LibraryManager;
 
-import jdk.swing.interop.SwingInterOpUtils;
-
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -24,7 +22,7 @@ public class Main{
             System.out.println("Press 2 to add new book to library");
             System.out.println("Press 3 to remove any book from the library");
 
-            // TODO-> implement the rest of the admin features
+            // TODO-> implement the feature for Press 5
             System.out.println("Press 4 to see list of all students");
             System.out.println("Press 5 to temporarily ban any student from borrowing books");
             System.out.println("Press 6 to permanently delete any student's account");
