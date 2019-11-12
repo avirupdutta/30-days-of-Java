@@ -1,5 +1,7 @@
 package LibraryManager;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -21,8 +23,10 @@ public class Main{
             System.out.println("Press 1 to see list of all books in library");
             System.out.println("Press 2 to add new book to library");
             System.out.println("Press 3 to remove any book from the library");
+
+            // TODO-> implement the rest of the admin features
             System.out.println("Press 4 to see list of all students");
-            System.out.println("Press 5 to ban any student from borrowing books");
+            System.out.println("Press 5 to temporarily ban any student from borrowing books");
             System.out.println("Press 6 to permanently delete any student's account");
             System.out.println("Press 0 to logout");
         }
@@ -141,6 +145,41 @@ public class Main{
         return foundUser;
     }
 
+    // displays all books
+    public static void showAllStudents(){
+        for (User userObj : allUsers) {
+            System.out.println("Username: "+userObj.username+" | Total Books: "+userObj.countBooks);
+        }
+    }
+
+    // returns true of student is found in the system
+    public static User findUser(String username){
+        User user = null;
+        for(User userObj : allUsers){
+            if (userObj.username.equals(username)){
+                user = userObj;
+                break;
+            }
+        }
+        return user;
+    }
+
+    // permanently delete any student's account
+    public static boolean removeUserPermanently(String username){
+        User userObj = findUser(username);
+        if (userObj != null){
+
+            // return all the books that have been borrowed by the user
+            for(Book bookObj : userObj.borrowedBooks){
+                updateBookQuantity(bookObj.title, bookObj.author, 1);
+            }
+
+            allUsers.remove(userObj);
+            return true;
+        }
+        return false;
+    }
+
 //    @TODO -> Refactor the entire main()
 //    @TODO-> Check for any raised exceptions when user is expected to enter any integer
     public static void main ( String[] args ) {
@@ -237,6 +276,30 @@ public class Main{
                                     }
                                 });
                                 t1.start();
+                            }
+
+                            // displays list of all students
+                            else if (adminInput == 4){
+                                System.out.println("\n================= LIST OF ALL STUDENTS =================");
+                                showAllStudents();
+                                System.out.println("=========================================================\n");
+                            }
+
+                            // temporarily ban any student from borrowing books
+                            else if (adminInput == 5){
+                                // code...
+                            }
+
+                            // permanently delete any student's account
+                            else if (adminInput == 6){
+                                System.out.print("Enter the username of the student to be removed permanently: ");
+                                String username = userInput.nextLine();
+                                if (removeUserPermanently(username)){
+                                    System.out.println(username+" has been permanently removed!");
+                                }
+                                else{
+                                    System.out.println(username+" is not found in the system");
+                                }
                             }
 
                             // logout the admin
