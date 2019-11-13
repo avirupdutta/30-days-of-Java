@@ -21,12 +21,89 @@ public class Main{
             System.out.println("Press 1 to see list of all books in library");
             System.out.println("Press 2 to add new book to library");
             System.out.println("Press 3 to remove any book from the library");
-
-            // TODO-> implement the feature for Press 5
             System.out.println("Press 4 to see list of all students");
-            System.out.println("Press 5 to temporarily ban any student from borrowing books");
+            System.out.println("Press 5 to reset password for students");
             System.out.println("Press 6 to permanently delete any student's account");
             System.out.println("Press 0 to logout");
+        }
+
+
+        // 2. Adds a new book into the library
+        public void addNewBookToLibrary(String title, String author, int count) {
+            Book newBook = new Book(title, author, count);
+            allBooks.add(newBook);
+        }
+
+        // 3. Removes a book from library and from all student's account
+        public void removeBookPermanently(Long id, String bookName, String author){
+
+//            TODO -> Remove the bug that is leading "java.util.ConcurrentModificationException"
+
+            int time = 10000;
+            if (findBook(bookName, author)){
+                // pausing the thread for "time" secs
+                try{
+                    Thread.sleep(time);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                System.out.println("Removing from Library...");
+                for(Book bookObj : allBooks){
+                    if ((bookObj.uid.equals(id))){
+                        allBooks.remove(bookObj);
+                    }
+                }
+
+                // pausing the thread for "time" secs
+                try{
+                    Thread.sleep(time);
+                }
+                catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                System.out.println("Removing from All Students...");
+                for(User userObj : allUsers){
+                    userObj.returnBook(id);
+                }
+                System.out.println("Book has been removed permanently from the system.");
+            }
+            else{
+                System.out.println("Book is not found in the library");
+            }
+        }
+
+        // 4. displays all users
+        public void showAllUsers(){
+            for (User userObj : allUsers) {
+                System.out.println("Username: "+userObj.username+" | Total Books: "+userObj.countBooks);
+            }
+        }
+
+        // 5. reset password of any student
+        public boolean resetUserPassword(String username, String newPassword){
+            User userObj = findUser(username);
+            if (userObj != null){
+                userObj.password = newPassword;
+                return true;
+            }
+            return false;
+        }
+
+        // 6. permanently delete any student's account
+        public boolean removeUserPermanently(String username){
+            User userObj = findUser(username);
+            if (userObj != null){
+
+                // return all the books that have been borrowed by the user
+                for(Book bookObj : userObj.borrowedBooks){
+                    updateBookQuantity(bookObj.title, bookObj.author, 1);
+                }
+
+                allUsers.remove(userObj);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -34,52 +111,15 @@ public class Main{
     private static ArrayList<Book> allBooks = new ArrayList<>();
     private static ArrayList<User> allUsers = new ArrayList<>();
 
-//    Adds a new book into the library
-    public static void addNewBookToLibrary(String title, String author, int count) {
-        Book newBook = new Book(title, author, count);
-        allBooks.add(newBook);
-    }
-
-    // Removes a book from library and from all student's account
-    public static void removeBookPermanently(Long id, String bookName, String author){
-        if (findBook(bookName, author)){
-            // pausing the thread for 3 sec
-            try{
-                Thread.sleep(3000);
-            }
-            catch (InterruptedException e){
-                e.printStackTrace();
-            }
-            System.out.println("Removing from Library...");
-            for(Book bookObj : allBooks){
-                if ((bookObj.uid.equals(id))){
-                    allBooks.remove(bookObj);
-                }
-            }
-
-            // pausing the thread for 3 sec
-            try{
-                Thread.sleep(3000);
-            }
-            catch (InterruptedException e){
-                e.printStackTrace();
-            }
-            System.out.println("Removing from All Students...");
-            for(User userObj : allUsers){
-                userObj.returnBook(id);
-            }
-            System.out.println("Book has been removed permanently from the system.");
-        }
-        else{
-            System.out.println("Book is not found in the library");
-        }
-    }
 
 //    displays all the books and their details in the console
     public static void showAllBooks(){
+        System.out.println("====== LIST OF ALL BOOKS ======");
         for (Book book : allBooks) {
             System.out.println("Id: "+book.uid+" | Title: "+book.title+" | Author: "+book.author+" | Available: "+(book.totalCount > 0));
         }
+        System.out.println("======= END OF LIST =======");
+        System.out.println();
     }
 
 //    check if the book actually exits or not in the library
@@ -143,13 +183,6 @@ public class Main{
         return foundUser;
     }
 
-    // displays all books
-    public static void showAllStudents(){
-        for (User userObj : allUsers) {
-            System.out.println("Username: "+userObj.username+" | Total Books: "+userObj.countBooks);
-        }
-    }
-
     // returns true of student is found in the system
     public static User findUser(String username){
         User user = null;
@@ -162,21 +195,6 @@ public class Main{
         return user;
     }
 
-    // permanently delete any student's account
-    public static boolean removeUserPermanently(String username){
-        User userObj = findUser(username);
-        if (userObj != null){
-
-            // return all the books that have been borrowed by the user
-            for(Book bookObj : userObj.borrowedBooks){
-                updateBookQuantity(bookObj.title, bookObj.author, 1);
-            }
-
-            allUsers.remove(userObj);
-            return true;
-        }
-        return false;
-    }
 
 //    @TODO -> Refactor the entire main()
 //    @TODO-> Check for any raised exceptions when user is expected to enter any integer
@@ -190,8 +208,7 @@ public class Main{
         int input;
         while(true){
             System.out.println("\n============================== MAIN MENU ===========================");
-//            @TODO-> Redesign the Admin Panel
-            System.out.println("Press 1 for registering new Book to library (Admin)");
+            System.out.println("Press 1 for Library Admin");
             System.out.println("Press 2 for Students");
             System.out.println("Press 0 for exit");
             try {
@@ -207,9 +224,9 @@ public class Main{
             else if (input == 1) {
                 // 1. Login to the admin panel after authentication
                 // 2. Display all features available for the admin
-                System.out.println("\n============================== ADMIN'S MENU ===========================");
+                System.out.println("\n============================== ADMIN AUTHENTICATION ===========================");
                 while (true){
-                    System.out.println("Press 1 to Login to Admin Panel");
+                    System.out.println("\nPress 1 to Login to Admin Panel");
                     System.out.println("Press 9 to go back");
                     System.out.println("Press 0 for exit");
                     int choice = userInput.nextInt();
@@ -223,6 +240,7 @@ public class Main{
                         boolean adminIsAuth = admin.authenticateAdmin(adminUsername, adminPassword);
 
                         while (adminIsAuth){
+                            System.out.println("\n============================== ADMIN MENU ===========================");
                             admin.displayAllOptions();
                             int adminInput = userInput.nextInt();
                             userInput.nextLine(); // clearing the buffer
@@ -233,7 +251,7 @@ public class Main{
 
                             // add new book to library
                             else if (adminInput == 2){
-                                System.out.println("How many books you want to register in the library?");
+                                System.out.println("\nHow many books you want to register in the library?");
                                 int num = userInput.nextInt();
                                 for (int i = 0; i < num; i++){
                                     //                   simple user input for development purposes
@@ -251,7 +269,7 @@ public class Main{
                                         updateBookQuantity(title, author, quantity);
                                     }
                                     else{
-                                        addNewBookToLibrary(title, author, quantity);
+                                        admin.addNewBookToLibrary(title, author, quantity);
                                     }
                                     System.out.println();
                                 }
@@ -259,18 +277,19 @@ public class Main{
 
                             // remove a book permanently from library using separate thread
                             else if (adminInput == 3){
-                                System.out.print("Enter the book id which is to be removed: ");
+                                System.out.println("\n=========== REMOVING BOOK PERMANENTLY ==========");
+                                System.out.print("\nEnter Book's Id: ");
                                 Long id = userInput.nextLong();
                                 userInput.nextLine(); // clearing the buffer
-                                System.out.print("Enter the book title which is to be removed: ");
+                                System.out.print("Enter Book's Title: ");
                                 String bookTitle = userInput.nextLine();
-                                System.out.print("Enter the book id which is to be removed: ");
+                                System.out.print("Enter Book's Author: ");
                                 String author = userInput.nextLine();
 
                                 Thread t1 = new Thread(new Runnable() {
                                     @Override
                                     public void run () {
-                                        removeBookPermanently(id, bookTitle, author);
+                                        admin.removeBookPermanently(id, bookTitle, author);
                                     }
                                 });
                                 t1.start();
@@ -279,20 +298,27 @@ public class Main{
                             // displays list of all students
                             else if (adminInput == 4){
                                 System.out.println("\n================= LIST OF ALL STUDENTS =================");
-                                showAllStudents();
+                                admin.showAllUsers();
                                 System.out.println("=========================================================\n");
                             }
 
-                            // temporarily ban any student from borrowing books
+                            // reset password for students
                             else if (adminInput == 5){
-                                // code...
+                                System.out.print("Enter the Username: ");
+                                String uname = userInput.nextLine();
+                                System.out.print("Enter the new Password: ");
+                                String newPassword = userInput.nextLine();
+                                if (admin.resetUserPassword(uname, newPassword))
+                                    System.out.println("Password reset is successful!");
+                                else
+                                    System.out.println("User not found! Password reset is unsuccessful");
                             }
 
                             // permanently delete any student's account
                             else if (adminInput == 6){
                                 System.out.print("Enter the username of the student to be removed permanently: ");
                                 String username = userInput.nextLine();
-                                if (removeUserPermanently(username)){
+                                if (admin.removeUserPermanently(username)){
                                     System.out.println(username+" has been permanently removed!");
                                 }
                                 else{
@@ -358,10 +384,7 @@ public class Main{
 
                                 // see list of all Books available in library
                                 if (choice == 1){
-                                    System.out.println("====== LIST OF ALL BOOKS ======");
                                     showAllBooks();
-                                    System.out.println("======= END OF LIST =======");
-                                    System.out.println();
                                 }
 
                                 // search for any book's availability
@@ -497,15 +520,5 @@ public class Main{
                 }
             }
         }
-
-
-//        addNewBook("My 0th Book", "Abc0");
-//        addNewBook("My 1st Book", "Abc1");
-//        addNewBook("My 2nd Book", "Abc2");
-//        addNewBook("My 3rd Book", "Abc3");
-//        addNewBook("My 4th Book", "Abc4");
-//        addNewBook("My 5h Book", "Abc5");
-
-//        showAllBooks();
     }
 }

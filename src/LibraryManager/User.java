@@ -8,7 +8,7 @@ public class User {
 //    String[] borrowedBooksId = new String[limit];
     ArrayList<Book> borrowedBooks = new ArrayList<Book>();
     final String username;
-    final String password;
+    String password;
     int countBooks;
     
     User(String name, String pass){

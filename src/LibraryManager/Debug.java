@@ -1,5 +1,8 @@
 package LibraryManager;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Debug {
@@ -25,7 +28,35 @@ public class Debug {
 //            }
 //        }
 
-        System.out.println("              abc".strip().length());
+//        System.out.println("              abc".strip().length());
+
+        ArrayList <String> list = new ArrayList<>();
+        list.add("1");
+        list.add("2");
+        list.add("3");
+
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run () {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                list.remove("2");
+                System.out.println(Arrays.toString(list.toArray()));
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                list.remove("2");
+                System.out.println(Arrays.toString(list.toArray()));
+            }
+        });
+        t1.start();
 
     }
 }
