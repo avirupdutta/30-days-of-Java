@@ -43,7 +43,10 @@ public class Debug {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                list.remove("2");
+                for (String n : list){
+                    if (n.equals("2"))
+                        list.remove("2");
+                }
                 System.out.println(Arrays.toString(list.toArray()));
 
                 try {

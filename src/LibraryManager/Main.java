@@ -37,32 +37,34 @@ public class Main{
         // 3. Removes a book from library and from all student's account
         public void removeBookPermanently(Long id, String bookName, String author){
 
-//            TODO -> Remove the bug that is leading "java.util.ConcurrentModificationException"
+            int time = 3000;
+            if (findBook(bookName, author, false)){
 
-            int time = 10000;
-            if (findBook(bookName, author)){
-                // pausing the thread for "time" secs
+//                 pausing the thread for "time" secs
+                System.out.println("Removing from Library...");
                 try{
                     Thread.sleep(time);
                 }
                 catch (InterruptedException e){
                     e.printStackTrace();
                 }
-                System.out.println("Removing from Library...");
-                for(Book bookObj : allBooks){
-                    if ((bookObj.uid.equals(id))){
+
+                Book bookObj;
+                for (int i = 0; i < allBooks.size(); i++) {
+                    bookObj = allBooks.get(i);
+                    if ((bookObj.uid.equals(id))) {
                         allBooks.remove(bookObj);
                     }
                 }
 
-                // pausing the thread for "time" secs
+//                 pausing the thread for "time" secs
+                System.out.println("Removing from All Students...");
                 try{
                     Thread.sleep(time);
                 }
                 catch (InterruptedException e){
                     e.printStackTrace();
                 }
-                System.out.println("Removing from All Students...");
                 for(User userObj : allUsers){
                     userObj.returnBook(id);
                 }
@@ -123,12 +125,23 @@ public class Main{
     }
 
 //    check if the book actually exits or not in the library
-    public static boolean findBook(String bookName, String author){
+    public static boolean findBook(String bookName, String author, boolean checkCount){
         boolean bookFound = false;
-        for (Book book : allBooks) {
-            if (book.title.equals(bookName) && book.author.equals(author) && book.totalCount > 0) {
-                bookFound = true;
-                break;
+
+        if (checkCount){
+            for (Book book : allBooks) {
+                if (book.title.equals(bookName) && book.author.equals(author) && book.totalCount > 0) {
+                    bookFound = true;
+                    break;
+                }
+            }
+        }
+        else{
+            for (Book book : allBooks) {
+                if (book.title.equals(bookName) && book.author.equals(author)) {
+                    bookFound = true;
+                    break;
+                }
             }
         }
         return  bookFound;
@@ -264,8 +277,8 @@ public class Main{
                                     System.out.print("Enter Quantity: ");
                                     int quantity = userInput.nextInt();
 
-                                    // check if the book is already present in the library or not
-                                    if(findBook(title, author)){
+                                    // check if the book is ever registered in the library or not
+                                    if(findBook(title, author, false)){
                                         updateBookQuantity(title, author, quantity);
                                     }
                                     else{
@@ -395,7 +408,7 @@ public class Main{
                                     System.out.print("Enter author name: ");
                                     String author = userInput.nextLine();
 
-                                    if (findBook(bookName, author)){
+                                    if (findBook(bookName, author, true)){
                                         System.out.println("Your Book is Currently Available");
                                     }
                                     else{
@@ -423,7 +436,7 @@ public class Main{
                                     userInput.nextLine(); // clearing the buffer for '\n'
 
                                     // check if the book is actually present in the library or not
-                                    if (findBook(bookName, author)){
+                                    if (findBook(bookName, author, true)){
                                         try {
                                             // 0. if the user already have reached borrow limit then don't give another one
                                             // 1. if the user already have that book then don't give another one
